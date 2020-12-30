@@ -1,12 +1,50 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, FlatList, Alert } from 'react-native';
+import Header from './components/Header'
+import ListItem from './components/ListItem'
+import uuid from 'uuid-random'
+import AddItem from './components/AddItem';
 
-export default function App() {
+const App = () => {
+
+  const [items, setItems] = useState([])
+
+  const deleteItem = (id) => {
+    setItems(prevItems => {
+      return prevItems.filter(item => item.id != id)
+    })
+  }
+
+  const addItem = (text) => {
+    if (!text) {
+      Alert.alert('Error', 'Please enter something!!', [
+        { text: "OK"}
+        ],
+        );
+    } else {
+      setItems(prevItems => {
+        return [{ id: uuid(), text }, ...prevItems]
+      })
+      
+    }
+    
+
+  }
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <Header />
+      <AddItem
+        addItem={addItem} />
+      <FlatList
+        data={items}
+        renderItem={({ item }) =>
+        (<ListItem
+          item={item}
+          deleteItem={deleteItem}
+        />)
+        }
+      />
     </View>
   );
 }
@@ -14,8 +52,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: 20
+
   },
 });
+
+export default App;
